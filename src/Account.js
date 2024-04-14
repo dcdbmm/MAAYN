@@ -1,16 +1,52 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
 const Account = () => {
+    const navigate = useNavigate();
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        // Retrieve form data from the event object
+        const formData = new FormData(event.target);
+        const data = {};
+        formData.forEach((value, key) => {
+            data[key] = value;
+        });
+
+        try {
+            const response = await fetch('http://localhost:8080/account', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            const status = response.status;
+            const responseJson = await response.json();
+            console.log('responseJson', responseJson);
+            if (status === 200) {
+                navigate('/home');
+            } else {
+                alert('Incorrect credentials');
+            }
+        } catch (e) {
+            alert(`Error: ${e.message}`);
+        }
+    }
+
     return (
         <div className="w3-content w3-container">
             <h2>Account</h2>
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="first-name">First Name</label>
-                    <input type="text" id="first-name" name="first-name" required />
+                    <input type="text" id="first-name" name="firstName" required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="last-name">Last Name</label>
-                    <input type="text" id="last-name" name="last-name" required />
+                    <input type="text" id="last-name" name="lastName" required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="address1">Address Line 1</label>
@@ -30,11 +66,11 @@ const Account = () => {
                 </div>
                 <div className="form-group">
                     <label htmlFor="zip-code">Zip Code</label>
-                    <input type="text" id="zip-code" name="zip-code" required />
+                    <input type="text" id="zip-code" name="zipCode" required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="phone-number">Phone Number</label>
-                    <input type="tel" id="phone-number" name="phone-number" required />
+                    <input type="tel" id="phone-number" name="phoneNumber" required />
                 </div>
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
@@ -47,4 +83,5 @@ const Account = () => {
         </div>
     );
 }
+
 export default Account;

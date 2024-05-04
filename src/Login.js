@@ -12,7 +12,8 @@ const Login = ({ setIsLoggedIn }) => {
         setPassword(event.target.value);
     };
 
-    const handleLogin = async () => {
+    const handleLogin = async (event) => {
+        event.preventDefault();
         if (!username.trim() || !password.trim()) {
             alert('Please enter both username and password.');
             return;
@@ -28,50 +29,53 @@ const Login = ({ setIsLoggedIn }) => {
                 body: JSON.stringify( {username, password})
             });
             const status = response.status;
-            const responseJson = await response.json();
-            console.log('responseJson', responseJson);
+            const responseData = await response.json();
+            console.log('responseData', responseData);
             if (status === 200) {
+                localStorage.setItem('userId', responseData.id);
                 setIsLoggedIn(true);
+            } else if (status === 401) {
+                alert('Incorrect password');
             } else {
-                alert('Incorrect credentials');
+                alert('No account yet. Please register');
             }
         } catch (e) {
             alert(`Error: ${e.message}`);
         }
     }
 
-        return (
-            <div className="w3-content w3-container">
-                <h2>Login</h2>
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="username">Username</label>
-                        <input
-                            type="text"
-                            id="username"
-                            name="username"
-                            value={username}
-                            onChange={handleUsernameChange}
-                            required
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={password}
-                            onChange={handlePasswordChange}
-                            required
-                        />
-                    </div>
-                    <button className="btn btn-primary" type="button" onClick={handleLogin}>
-                        Login
-                    </button>
-                </form>
-            </div>
-        );
-    };
+    return (
+        <div className="w3-content w3-container">
+            <h2>Login</h2>
+            <form onSubmit={handleLogin}>
+                <div className="form-group">
+                    <label htmlFor="username">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        name="username"
+                        value={username}
+                        onChange={handleUsernameChange}
+                        required
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        value={password}
+                        onChange={handlePasswordChange}
+                        required
+                    />
+                </div>
+                <button className="btn btn-primary" type="submit">
+                    Login
+                </button>
+            </form>
+        </div>
+    );
+};
 
 export default Login;

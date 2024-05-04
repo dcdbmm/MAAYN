@@ -28,9 +28,10 @@ const Registration = () => {
             const responseJson = await response.json();
             console.log('responseJson', responseJson);
             if (status === 201) {
+                localStorage.setItem('userId', responseJson.id);
                 navigate('/login');
             } else {
-                alert('Registration failed. Please try again.');
+                alert('You already have an account. Please log in.');
             }
         } catch (e) {
             alert(`Error: ${e.message}`);
